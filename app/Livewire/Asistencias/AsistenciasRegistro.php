@@ -5,7 +5,7 @@ namespace App\Livewire\Asistencias;
 use App\Models\Asistencia;
 use App\Models\ControlAsistencia;
 use App\Models\Empleado;
-use App\Models\Feriado; // Importar el modelo Feriado
+use App\Models\Feriado; 
 use Livewire\Component;
 
 class AsistenciasRegistro extends Component
@@ -16,64 +16,77 @@ class AsistenciasRegistro extends Component
         'dni' => 'required|exists:empleados,dni',
     ];
 
+    protected $listeners = ['swal' => 'swal'];
+
     public function submit()
-    {
-        $validatedData = $this->validate();
+{
+    $validatedData = $this->validate();
+    $fecha = now()->format('Y-m-d');
 
-        // Obtener la fecha actual
-        $fecha = now()->format('Y-m-d');
+    // Verificar si es feriado
+    if (Feriado::where('fecha', $fecha)->exists()) {
+        $this->dispatch('swal', [
+            'title' => 'Error',
+            'text' => 'Hoy es feriado. No se pueden registrar asistencias.',
+            'icon' => 'error'
+        ]);
+        $this->reset('dni');
+        return;
+    }
 
-        // Verificar si la fecha actual es un feriado
-        $esFeriado = Feriado::where('fecha', $fecha)->exists();
+    // Buscar empleado
+    $empleado = Empleado::where('dni', $validatedData['dni'])->first();
+    if (!$empleado || !$empleado->is_active) {
+        $this->dispatch('swal', [
+            'title' => 'Error',
+            'text' => 'El empleado no está activo o no existe.',
+            'icon' => 'error'
+        ]);
+        $this->reset('dni');
+        return;
+    }
 
-        if ($esFeriado) {
-            session()->flash('error', 'Hoy es feriado. No se pueden registrar asistencias.');
-            return; // Detener la ejecución
-        }
+    // Obtener o crear asistencia
+    $asistencia = Asistencia::firstOrCreate(['fecha_asistencia' => $fecha]);
 
-        // Buscar al empleado por su DNI
-        $empleado = Empleado::where('dni', $validatedData['dni'])->first();
+    // Verificar si ya tiene un registro hoy
+    $registroExistente = ControlAsistencia::where('empleado_id', $empleado->id)
+        ->where('asistencia_id', $asistencia->id)
+        ->first();
 
-        // Verificar si el empleado está activo
-        if (!$empleado->is_active) {
-            session()->flash('error', 'El empleado no está activo. No se puede registrar la asistencia.');
-            return; // Detener la ejecución
-        }
-
-        // Obtener la asistencia para la fecha actual (si ya existe)
-        $asistencia = Asistencia::firstOrCreate(
-            ['fecha_asistencia' => $fecha], // Buscar por fecha
-            ['fecha_asistencia' => $fecha]  // Crear si no existe
-        );
-
-        // Verificar si el empleado ya tiene un registro para el día
-        $registroExistente = ControlAsistencia::where('empleado_id', $empleado->id)
-            ->where('asistencia_id', $asistencia->id)
-            ->first();
-
-        if (!$registroExistente) {
-            // Si no existe un registro, crear uno con la hora de entrada
-            ControlAsistencia::create([
-                'asistencia_id' => $asistencia->id,
-                'empleado_id' => $empleado->id,
-                'estado' => 'asistió',  // Asumiendo que el estado siempre es 'asistió' al registrar la entrada
-                'hora_entrada' => now()->format('H:i:s'),
-                'hora_salida' => null, // No se registra la salida aún
-            ]);
-            session()->flash('message', 'Entrada registrada correctamente');
+    if (!$registroExistente) {
+        ControlAsistencia::create([
+            'asistencia_id' => $asistencia->id,
+            'empleado_id' => $empleado->id,
+            'estado' => 'asistió',
+            'hora_entrada' => now()->format('H:i:s'),
+            'hora_salida' => null,
+        ]);
+        $message = 'Entrada registrada correctamente.';
+        $icon = 'success';
+    } else {
+        if ($registroExistente->hora_salida) {
+            $message = 'Ya se registró la salida para hoy.';
+            $icon = 'error';
         } else {
-            // Si ya existe el registro, verificar si ya se registró la salida
-            if ($registroExistente->hora_salida) {
-                session()->flash('error', 'Ya se registró la salida para hoy.');
-            } else {
-                // Si no se ha registrado la salida, actualizar la hora de salida
-                $registroExistente->update([
-                    'hora_salida' => now()->format('H:i:s'),
-                ]);
-                session()->flash('message', 'Salida registrada correctamente');
-            }
+            $registroExistente->update([
+                'hora_salida' => now()->format('H:i:s'),
+            ]);
+            $message = 'Salida registrada correctamente.';
+            $icon = 'success';
         }
     }
+
+    $this->dispatch('swal', [
+        'title' => 'Asistencia',
+        'text' => $message,
+        'icon' => $icon
+    ]);
+
+    $this->reset('dni');
+    session()->forget('message');
+    session()->forget('error');
+}
 
     public function render()
     {

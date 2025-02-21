@@ -112,15 +112,17 @@
             <div>
                 <button
                     wire:click="resetFilters"
-                    class="w-full px-4 py-1 bg-blue-400 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    class="w-full px-4 py-1 bg-blue-400 text-black rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                 >
-                    Resetear Filtros
+                <i class="fas fa-sync-alt"></i>
+                 Resetear Filtros
                 </button>
                 <button
                     wire:click="downloadPdf"
-                    class="w-full px-4 py-1 bg-green-400 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-4 py-1 bg-green-400 text-black rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                    Descargar PDF
+                <i class="fas fa-file-pdf"></i>
+                 Descargar PDF
                 </button>
             </div>
         </div>

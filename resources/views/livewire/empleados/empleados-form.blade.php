@@ -4,7 +4,7 @@
         <div class="fixed inset-0 bg-gray-500 bg-opacity-50 z-50 overflow-y-auto">
             <!-- Contenedor del modal -->
             <div class="fixed inset-0 flex items-center justify-center">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-150">
                     <h2 class="text-lg font-bold mb-4">
                         {{ $isEditing ? 'Editar Empleado' : 'Nuevo Empleado' }}
                     </h2>

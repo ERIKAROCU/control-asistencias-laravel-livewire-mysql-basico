@@ -58,7 +58,7 @@ class AsistenciasTable extends Component
             ->when($this->search, function ($query) {
                 $query->where('fecha_asistencia', 'like', '%' . $this->search . '%');
             })
-            ->orderBy('id', 'desc')
+            ->orderBy('fecha_asistencia', 'desc')
             ->paginate($this->perPage);
 
         return view('livewire.asistencias.asistencias-table', compact('asistencias', 'horadefecto'))->layout('layouts.app');

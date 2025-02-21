@@ -81,8 +81,45 @@ class AsistenciasAll extends Component
             ->orderBy(Asistencia::select('fecha_asistencia')->whereColumn('control_asistencias.asistencia_id', 'asistencias.id'), 'desc')
             ->get();
 
+        // Obtener el empleado seleccionado
+        $empleadoSeleccionado = null;
+
+        // Si se seleccionó un empleado en el combobox
+        if ($this->userName !== '') {
+            $empleadoSeleccionado = Empleado::find($this->userName);
+        }
+        // Si no se seleccionó un empleado en el combobox, pero la búsqueda avanzada devuelve un único empleado
+        elseif ($this->search !== '') {
+            $empleadosUnicos = $asistencias->unique('empleado_id'); // Obtener empleados únicos en los resultados
+            if ($empleadosUnicos->count() === 1) {
+                $empleadoSeleccionado = $empleadosUnicos->first()->empleado;
+            }
+        }
+
+        // Obtener los meses y años únicos de las asistencias
+        $meses = [];
+        $años = [];
+        foreach ($asistencias as $asistencia) {
+            if ($asistencia->asistencia) {
+                $fecha = \Carbon\Carbon::parse($asistencia->asistencia->fecha_asistencia);
+                $mes = $fecha->locale('es')->isoFormat('MMMM'); // Mes en español
+                $año = $fecha->year; // Año
+                if (!in_array($mes, $meses)) {
+                    $meses[] = $mes;
+                }
+                if (!in_array($año, $años)) {
+                    $años[] = $año;
+                }
+            }
+        }
+
         // Cargar la vista del PDF con los datos
-        $pdf = Pdf::loadView('pdf.asistencias', compact('asistencias'));
+        $pdf = Pdf::loadView('pdf.asistencias', [
+            'asistencias' => $asistencias,
+            'empleadoSeleccionado' => $empleadoSeleccionado, // Pasamos el empleado seleccionado
+            'meses' => $meses, // Pasamos los meses únicos
+            'años' => $años, // Pasamos los años únicos
+        ]);
 
         // Descargar el PDF
         return Response::streamDownload(function () use ($pdf) {
