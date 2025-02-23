@@ -39,7 +39,7 @@
         <input
             type="text"
             wire:model.live="search"
-            placeholder="Buscar por nombre, correo, DNI o cargo..."
+            placeholder="Buscar por fecha "
             class="w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
 

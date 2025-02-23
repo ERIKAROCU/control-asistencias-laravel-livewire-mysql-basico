@@ -29,32 +29,37 @@ class AsistenciasRegistroManual extends Component
     ];
 
     public function showModalAsistencias($fecha_asistencia)
-    {
-        $this->fechaSeleccionada = is_array($fecha_asistencia) && isset($fecha_asistencia['fecha_asistencia'])
-            ? $fecha_asistencia['fecha_asistencia']
-            : $fecha_asistencia;
+{
+    $this->fechaSeleccionada = is_array($fecha_asistencia) && isset($fecha_asistencia['fecha_asistencia'])
+        ? $fecha_asistencia['fecha_asistencia']
+        : $fecha_asistencia;
 
-        $this->modalVisible = true;
+    $this->modalVisible = true;
 
-        // Inicializar la lista de asistencias seleccionadas con los empleados que ya tienen asistencia
-        $this->asistenciasSeleccionadas = ControlAsistencia::whereHas('asistencia', function ($q) {
-            $q->where('fecha_asistencia', $this->fechaSeleccionada);
-        })->pluck('empleado_id')->toArray();
-    }
+    // Inicializar la lista de asistencias seleccionadas con los empleados que tienen estado "asistió"
+    $this->asistenciasSeleccionadas = ControlAsistencia::whereHas('asistencia', function ($q) {
+        $q->where('fecha_asistencia', $this->fechaSeleccionada);
+    })
+    ->where('estado', 'asistió') // Solo empleados con estado "asistió"
+    ->pluck('empleado_id')
+    ->toArray();
+}
 
-    public function toggleAsistencia($empleadoId)
+public function toggleAsistencia($empleadoId)
 {
     if (in_array($empleadoId, $this->asistenciasSeleccionadas)) {
         // Si el empleado ya estaba seleccionado, lo deseleccionamos
         $this->asistenciasSeleccionadas = array_diff($this->asistenciasSeleccionadas, [$empleadoId]);
 
-        // Actualizamos el estado a "faltó" sin modificar las horas de entrada y salida
+        // Actualizamos el estado a "faltó" y eliminamos las horas de entrada y salida
         $asistencia = Asistencia::where('fecha_asistencia', $this->fechaSeleccionada)->first();
         if ($asistencia) {
             ControlAsistencia::where('asistencia_id', $asistencia->id)
                 ->where('empleado_id', $empleadoId)
                 ->update([
                     'estado' => 'falta',
+                    'hora_entrada' => null, // Eliminar horas de entrada
+                    'hora_salida' => null, // Eliminar horas de salida
                 ]);
         }
     } else {
@@ -82,6 +87,9 @@ class AsistenciasRegistroManual extends Component
             ]
         );
     }
+
+    // Forzar la actualización de la vista
+    $this->dispatch('refresh'); // Notificar a Livewire que actualice la vista
 }
 
     public function guardarAsistencias()

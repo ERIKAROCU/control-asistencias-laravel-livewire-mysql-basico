@@ -8,7 +8,7 @@ select*from asistencias;
 select*from control_asistencias;
 select*from hora_defecto;
 
-delete from asistencias where id = 13;
+delete from control_asistencias where id = 1;
 -- TRUNCATE TABLE control_asistencias;
 
 

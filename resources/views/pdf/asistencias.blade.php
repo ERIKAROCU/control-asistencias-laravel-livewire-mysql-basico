@@ -141,7 +141,7 @@
                 </tr>
             @else
                 <tr>
-                    <td colspan="4" class="asistencia-header">REPORTE GENERAL DE ASISTENCIAS</td>
+                    <td colspan="4" class="asistencia-header"><center>REPORTE GENERAL DE ASISTENCIAS</center></td>
                 </tr>
             @endif
             <tr>

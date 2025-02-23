@@ -46,9 +46,11 @@
                                         @endif
                                     </td>
                                     <td class="py-2 px-4 border-b text-sm text-gray-800">
-                                        <input type="checkbox" wire:click="toggleAsistencia({{ $empleado['empleado']->id }})"
+                                        <input type="checkbox" 
+                                               wire:click="toggleAsistencia({{ $empleado['empleado']->id }})"
                                                {{ in_array($empleado['empleado']->id, $asistenciasSeleccionadas) ? 'checked' : '' }}>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>
@@ -74,7 +76,11 @@
         </div>
     @endif
 </div>
-
+<script>
+    window.addEventListener('refresh', event => {
+        Livewire.emit('refresh'); // Forzar la actualización del componente Livewire
+    });
+</script>
 
 <script>
     window.addEventListener('swal', event => {

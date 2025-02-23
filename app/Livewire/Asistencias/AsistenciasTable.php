@@ -50,17 +50,20 @@ class AsistenciasTable extends Component
 
     public function render()
     {
-        // Obtener las horas por defecto
-        $horadefecto = HoraDefecto::first(); // O puedes ajustar la lógica si necesitas el registro adecuado
-
-        // Obtener las asistencias
+        // Obtener las asistencias con el filtro de búsqueda
         $asistencias = Asistencia::query()
             ->when($this->search, function ($query) {
+                // Filtrar por fecha o día en función de la búsqueda
                 $query->where('fecha_asistencia', 'like', '%' . $this->search . '%');
+            })
+            ->when($this->searchDate, function ($query) {
+                // Filtrar por fecha exacta
+                $query->whereDate('fecha_asistencia', '=', $this->searchDate);
             })
             ->orderBy('fecha_asistencia', 'desc')
             ->paginate($this->perPage);
 
-        return view('livewire.asistencias.asistencias-table', compact('asistencias', 'horadefecto'))->layout('layouts.app');
+        return view('livewire.asistencias.asistencias-table', compact('asistencias'))->layout('layouts.app');
     }
+
 }
