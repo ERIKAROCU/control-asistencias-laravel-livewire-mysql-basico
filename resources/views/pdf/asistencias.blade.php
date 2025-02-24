@@ -132,6 +132,10 @@
             <tr>
                 <td colspan="4" class="asistencia-header"><center>CONTROL DE ASISTENCIA</center></td>
             </tr>
+            <tr>
+                <td class="label">PROGRAMA DE ESTUDIOS:</td>
+                <td colspan="3" class="value">PRACTICAS PREPROFESIONALES</td>
+            </tr>
             @if ($empleadoSeleccionado)
                 <tr>
                     <td class="label">NOMBRES Y APELLIDOS:</td>
@@ -144,16 +148,19 @@
                     <td colspan="4" class="asistencia-header"><center>REPORTE GENERAL DE ASISTENCIAS</center></td>
                 </tr>
             @endif
-            <tr>
-                <td class="label">PROGRAMA DE ESTUDIOS:</td>
-                <td colspan="3" class="value">PRACTICAS PREPROFESIONALES</td>
-            </tr>
+
             <tr>
                 <td class="label">MES:</td>
                 <td class="value">{{ count($meses) > 0 ? implode(', ', $meses) : 'Sin datos' }}</td>
                 <td class="label">AÑO:</td>
                 <td class="value">{{ count($años) > 0 ? implode(', ', $años) : 'Sin datos' }}</td>
             </tr>
+            @if ($empleadoSeleccionado)
+                <tr>
+                    <td class="label">HORAS DE PRÁCTICAS:</td>
+                    <td class="value">{{ $horasRealizadas }}</td>
+                </tr>
+            @endif
         </table>
     </div>
     
@@ -164,7 +171,11 @@
                 <th>Número</th>
                 <th>Fecha</th>
                 <th>Día</th>
-                <th>Nombres</th>
+                @if ($empleadoSeleccionado)
+                    
+                @else
+                    <th>Nombres</th>
+                @endif
                 <th>Estado</th>
                 <th>Entrada</th>
                 <th>Salida</th>
@@ -178,7 +189,10 @@
                         \Carbon\Carbon::parse($asistencia->asistencia->fecha_asistencia)->format('d/m/Y') : 'Sin fecha' }}</td>
                     <td>{{ optional($asistencia->asistencia)->fecha_asistencia ? 
                         \Carbon\Carbon::parse($asistencia->asistencia->fecha_asistencia)->locale('es')->isoFormat('dddd') : '-' }}</td>
-                    <td>{{ $asistencia->empleado->nombres ?? 'No Asignado' }}</td>
+                    @if ($empleadoSeleccionado)
+                    @else
+                        <td>{{ $asistencia->empleado->nombres ?? 'No Asignado' }}</td>
+                    @endif
                     <td>{{ $asistencia->estado }}</td>
                     <td>{{ $asistencia->estado !== 'falta' ? $asistencia->hora_entrada : '-' }}</td>
                     <td>{{ $asistencia->estado !== 'falta' ? $asistencia->hora_salida : '-' }}</td>

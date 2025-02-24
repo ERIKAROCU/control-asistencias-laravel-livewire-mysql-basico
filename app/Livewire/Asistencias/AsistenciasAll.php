@@ -80,10 +80,10 @@ class AsistenciasAll extends Component
             })
             ->orderBy(Asistencia::select('fecha_asistencia')->whereColumn('control_asistencias.asistencia_id', 'asistencias.id'), 'desc')
             ->get();
-
+    
         // Obtener el empleado seleccionado
         $empleadoSeleccionado = null;
-
+    
         // Si se seleccionó un empleado en el combobox
         if ($this->userName !== '') {
             $empleadoSeleccionado = Empleado::find($this->userName);
@@ -95,7 +95,7 @@ class AsistenciasAll extends Component
                 $empleadoSeleccionado = $empleadosUnicos->first()->empleado;
             }
         }
-
+    
         // Obtener los meses y años únicos de las asistencias
         $meses = [];
         $años = [];
@@ -112,15 +112,36 @@ class AsistenciasAll extends Component
                 }
             }
         }
-
+    
+        // Calcular las horas realizadas solo con los registros filtrados
+        $horasRealizadas = 0;
+        if ($empleadoSeleccionado) {
+            // Filtrar las asistencias del empleado seleccionado dentro de los registros filtrados
+            $asistenciasFiltradas = $asistencias->where('empleado_id', $empleadoSeleccionado->id)
+                ->where('estado', 'asistió')
+                ->whereNotNull('hora_entrada')
+                ->whereNotNull('hora_salida');
+    
+            $horasRealizadas = $asistenciasFiltradas->sum(function ($asistencia) {
+                $horaEntrada = Carbon::parse($asistencia->hora_entrada);
+                $horaSalida = Carbon::parse($asistencia->hora_salida);
+                
+                return $horaEntrada->diffInHours($horaSalida);
+            });
+        }
+        
+        // Formatear horas realizadas
+        $horasRealizadasFormateadas = floor($horasRealizadas) . ' horas y ' . ($horasRealizadas % 1 * 60) . ' minutos';
+        
         // Cargar la vista del PDF con los datos
         $pdf = Pdf::loadView('pdf.asistencias', [
             'asistencias' => $asistencias,
-            'empleadoSeleccionado' => $empleadoSeleccionado, // Pasamos el empleado seleccionado
-            'meses' => $meses, // Pasamos los meses únicos
-            'años' => $años, // Pasamos los años únicos
+            'empleadoSeleccionado' => $empleadoSeleccionado, 
+            'meses' => $meses, 
+            'años' => $años, 
+            'horasRealizadas' => $horasRealizadasFormateadas,
         ]);
-
+    
         // Descargar el PDF
         return Response::streamDownload(function () use ($pdf) {
             echo $pdf->stream();
