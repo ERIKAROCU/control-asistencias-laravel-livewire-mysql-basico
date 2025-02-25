@@ -25,6 +25,8 @@ class AsistenciasAll extends Component
     public $diaFiltro = ''; // Filtro por día de la semana
     public $empleados = [];
     public $fechas = [];
+    public $isLoading = false;
+
 
     protected $listeners = ['refreshTable' => '$refresh', 'deleteRow' => 'deleteRow'];
 
@@ -43,6 +45,7 @@ class AsistenciasAll extends Component
 
     public function downloadPdf()
     {
+        $this->isLoading = true;
         // Obtener los datos filtrados
         $asistencias = ControlAsistencia::with(['empleado', 'asistencia'])
             ->when($this->search, function ($query) {
@@ -78,7 +81,7 @@ class AsistenciasAll extends Component
                     $q->whereRaw('DAYOFWEEK(fecha_asistencia) = ?', [$this->diaFiltro]);
                 });
             })
-            ->orderBy(Asistencia::select('fecha_asistencia')->whereColumn('control_asistencias.asistencia_id', 'asistencias.id'), 'desc')
+            ->orderBy(Asistencia::select('fecha_asistencia')->whereColumn('control_asistencias.asistencia_id', 'asistencias.id'), 'asc')
             ->get();
     
         // Obtener el empleado seleccionado
@@ -141,11 +144,16 @@ class AsistenciasAll extends Component
             'años' => $años, 
             'horasRealizadas' => $horasRealizadasFormateadas,
         ]);
-    
+
+        // Establecer el nombre del archivo
+        $nombreArchivo = $empleadoSeleccionado ? 'Asistencias - ' . $empleadoSeleccionado->nombres . '.pdf' : 'Asistencias.pdf';
+
         // Descargar el PDF
         return Response::streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'asistencias.pdf');
+        }, $nombreArchivo);
+
+        $this->isLoading = false;
     }
 
     public function render()

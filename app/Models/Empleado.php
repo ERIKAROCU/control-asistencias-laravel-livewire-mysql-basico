@@ -14,7 +14,8 @@ class Empleado extends Model
         'dni', 
         'celular', 
         'fecha_nacimiento', 
-        'is_active'
+        'is_active',
+        'programa_estudios'
     ];
 
     public function empleado()

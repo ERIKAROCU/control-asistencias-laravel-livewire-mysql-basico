@@ -16,6 +16,11 @@ class AsistenciasRegistro extends Component
         'dni' => 'required|exists:empleados,dni',
     ];
 
+    protected $messages = [
+        'dni.required' => 'El campo DNI es obligatorio.',
+        'dni.exists' => 'El empleado no existe.',
+    ];
+
     protected $listeners = ['swal' => 'swal'];
 
     public function submit()

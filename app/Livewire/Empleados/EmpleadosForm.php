@@ -10,6 +10,8 @@ class EmpleadosForm extends Component
 {
     public $empleado_id;
     public $nombres, $dni, $celular,$fecha_nacimiento, $is_active=true;
+    public $programa_estudios; // Agregar esta propiedad
+
     public $isEditing = false; // Determina si es edición o creación
     public $modalVisible = false;
 
@@ -25,7 +27,8 @@ class EmpleadosForm extends Component
             ],
             'celular' => 'nullable|string|max:15',
             'fecha_nacimiento' => 'required|date',
-            'is_active' => 'required',
+            'is_active' => 'required|in:0,1',
+            'programa_estudios' => 'nullable|string|max:255',
         ];
     }
 
@@ -43,6 +46,8 @@ class EmpleadosForm extends Component
         'fecha_nacimiento.date' => 'El campo fecha de nacimiento debe ser una fecha válida.',
         'is_active.required' => 'El campo estado es obligatorio.',
         'is_active.in' => 'El campo estado debe ser uno de los siguientes valores: activo, inactivo.',
+        'programa_estudios.string' => 'El campo programa de estudios debe ser una cadena de texto.', // Agregado aquí
+        'programa_estudios.max' => 'El campo programa de estudios no debe exceder los 255 caracteres.', // Agregado aquí
     ];
 
     protected $listeners = ['edit' => 'loadEmpleado', 'showModalEmpleado' => 'showModalEmpleado', 'refreshTable' => '$refresh', 'swal' => 'swal'];
@@ -62,12 +67,14 @@ class EmpleadosForm extends Component
         $this->celular = $empleado->celular;
         $this->fecha_nacimiento = $empleado->fecha_nacimiento;
         $this->is_active = $empleado->is_active;
+        $this->programa_estudios = $empleado->programa_estudios;
+        $this->isEditing = true;
         $this->modalVisible = true;
     }
 
     public function showModalEmpleado()
     {
-        $this->reset(['empleado_id', 'nombres', 'dni', 'celular', 'fecha_nacimiento']);
+        $this->reset(['empleado_id', 'nombres', 'dni', 'celular', 'fecha_nacimiento', 'programa_estudios']);
         $this->resetValidation();
         $this->isEditing = false;
         $this->modalVisible = true;
@@ -89,6 +96,7 @@ class EmpleadosForm extends Component
             'celular' => $this->celular,
             'fecha_nacimiento' => $this->fecha_nacimiento,
             'is_active' => $this->is_active,
+            'programa_estudios' => $this->programa_estudios,
         ];
 
         Empleado::updateOrCreate(['id' => $this->empleado_id], $data);

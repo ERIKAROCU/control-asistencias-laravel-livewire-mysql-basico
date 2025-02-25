@@ -4,7 +4,7 @@
         <div class="fixed inset-0 bg-gray-500 bg-opacity-50 z-50 overflow-y-auto">
             <!-- Contenedor del modal -->
             <div class="fixed inset-0 flex items-center justify-center">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-150">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-200">
                     <h2 class="text-lg font-bold mb-4">
                         {{ $isEditing ? 'Editar Empleado' : 'Nuevo Empleado' }}
                     </h2>
@@ -52,6 +52,15 @@
                             </select>
                             @error('is_active') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
                         </div>
+
+                        <!-- Programa de estudios -->
+                        <div class="col-span-1">
+                            <label for="programa_estudios" class="block text-sm font-medium text-gray-700">Programa de Estudios</label>
+                            <input type="text" wire:model="programa_estudios" id="programa_estudios" placeholder="Programa de estudios"
+                                class="mt-1 block w-full rounded-md border-gray-300 p-2">
+                            @error('programa_estudios') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
+                        </div>
+
 
                         <!-- Botones (col-span-2 para ocupar ambas columnas) -->
                         <div class="col-span-2 flex justify-end mt-4 space-x-2">

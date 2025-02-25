@@ -14,7 +14,7 @@
     <form wire:submit.prevent="submit" class="space-y-4">
         @csrf
         <div>
-            <label for="dni" class="block text-sm font-medium">Número DNI:</label>
+            <label for="dni" class="block text-sm font-medium">Ingrese su número de DNI:</label>
             <input
                 type="password"
                 id="dni"

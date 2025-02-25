@@ -18,6 +18,11 @@ Route::middleware('web')->group(function () {
     Route::post('/logout', Logout::class)->name('logout');
 });
 
+use App\Livewire\Dashboard;
+Route::get('/dashboard', Dashboard::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
 use App\Livewire\Empleados\EmpleadosTable;
 Route::get('/empleados', EmpleadosTable::class)->name('empleados.empleados-table');
 

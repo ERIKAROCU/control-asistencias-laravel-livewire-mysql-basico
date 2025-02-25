@@ -1,4 +1,12 @@
 <div class="container mx-auto p-4 bg-gray-50 rounded-lg shadow-md">
+    <!-- Loader Mejorado -->
+    <div wire:loading wire:target="downloadPdf" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75 z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center space-y-4 max-w-md w-full mx-4">
+            <div class="animate-spin border-4 border-blue-500 border-t-transparent rounded-full w-16 h-16"></div>
+            <p class="text-gray-800 text-xl font-semibold text-center">Generando PDF... Por favor espere</p>
+        </div>
+    </div>
+    
     <div>
         <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Listas de Asistencias</h1>
     </div>
@@ -187,3 +195,24 @@
         {{ $asistencias->links() }}
     </div>
 </div>
+
+<script>
+    // Mostrar el loader
+    Livewire.on('show-loader', () => {
+        Swal.fire({
+            title: 'Generando PDF...',
+            text: 'Por favor espere',
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    });
+
+    // Cerrar el loader al finalizar el proceso
+    Livewire.on('close-loader', () => {
+        Swal.close();
+    });
+</script>

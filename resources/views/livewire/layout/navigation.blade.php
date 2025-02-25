@@ -22,17 +22,25 @@ new class extends Component
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                {{-- <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" wire:navigate>
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
-                </div>
+                </div> --}}
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                {{-- <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                </div> --}}
+
+                <div class="flex items-center">
+                    <a href="{{ route('dashboard') }}" wire:navigate>
+                        {{-- <img src="{{ asset('img/informatica1.png') }}" alt="Logo" class="w-15 h-12"> --}}
+                        <x-logo class="w-15 h-12"/>
+                    </a>
+                    <span class="ml-3 text-lg font-bold hidden sm:block text-gray-900">Oficina de Tecnología e Informática</span>
                 </div>
             </div>
 
@@ -53,7 +61,7 @@ new class extends Component
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile')" wire:navigate>
-                            {{ __('Profile') }}
+                            {{ __('Perfil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->

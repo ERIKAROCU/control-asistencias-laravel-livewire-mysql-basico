@@ -113,11 +113,11 @@
         <table class="header-table">
             <tr>
                 <td style="width: 20%; text-align: left;">
-                    <img src="{{ public_path('img/logo_oti.png') }}" alt="Logo 1">
+                    <img src="{{ public_path('img/informatica1.png') }}" alt="Logo 1">
                 </td>
                 <td style="width: 60%; text-align: center;">
-                    <h1>MUNICIPALIDAD PROVINCIAL DE EL COLLAO – LLAVE</h1>
-                    <h2>OFICINA DE TECNOLOGIA E INFORMATICA</h2>
+                    <h1>MUNICIPALIDAD PROVINCIAL DE EL COLLAO – ILAVE</h1>
+                    <h2>OFICINA DE TECNOLOGÍA E INFORMÁTICA</h2>
                 </td>
                 <td style="width: 20%; text-align: right;">
                     <img src="{{ public_path('img/logo_muni_ilave.png') }}" alt="Logo 2">
@@ -132,11 +132,12 @@
             <tr>
                 <td colspan="4" class="asistencia-header"><center>CONTROL DE ASISTENCIA</center></td>
             </tr>
-            <tr>
-                <td class="label">PROGRAMA DE ESTUDIOS:</td>
-                <td colspan="3" class="value">PRACTICAS PREPROFESIONALES</td>
-            </tr>
+            
             @if ($empleadoSeleccionado)
+                <tr>
+                    <td class="label">PROGRAMA DE ESTUDIOS:</td>
+                    <td colspan="3" class="value">{{ $empleadoSeleccionado->programa_estudios }}</td>
+                </tr>
                 <tr>
                     <td class="label">NOMBRES Y APELLIDOS:</td>
                     <td class="value">{{ $empleadoSeleccionado->nombres }}</td>
@@ -204,20 +205,20 @@
     <table class="header-table" style="margin-top: 20px;">
         <tr>
             <td style="width: 50%; text-align: center;">
-                ..................................................<br>
-                FIRMA DEL PRACTICANTE<br>
-                DNI N° ................
+                <span style="font-size: 14px;">..................................................</span><br>
+                <span style="font-size: 14px;">FIRMA DEL PRACTICANTE</span><br>
+                <span style="font-size: 14px;">DNI N° ..........................</span>
             </td>
             <td style="width: 50%; text-align: center;">
-                ..................................................<br>
-                FIRMA DEL RESPONSABLE<br>
-                DNI N° ................
-            </td>
+                <span style="font-size: 14px;">..................................................</span><br>
+                <span style="font-size: 14px;">FIRMA DEL RESPONSABLE</span><br>
+                <span style="font-size: 14px;">DNI N° ..........................</span>
+            </td>            
         </tr>
     </table>
 
     <div class="footer">
-        <p>© {{ date('Y') }} Oficina de Tecnología de la Informática - El Collao Ilave. Todos los derechos reservados.</p>
+        <p>© {{ date('Y') }} Oficina de Tecnología e Informática - El Collao Ilave. Todos los derechos reservados.</p>
     </div>
 </body>
 </html>
